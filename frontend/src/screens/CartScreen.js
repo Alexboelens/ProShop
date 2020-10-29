@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react'
-import { useDispatch, useSelector } from 'react-redux'
 import { Link } from 'react-router-dom'
+import { useDispatch, useSelector } from 'react-redux'
 import { Row, Col, ListGroup, Image, Form, Button, Card } from 'react-bootstrap'
 import Message from '../components/Message'
 import { addToCart, removeFromCart } from '../redux/actions/cartActions'
@@ -23,7 +23,6 @@ const CartScreen = ({ match, location, history }) => {
 
 	const removeFromCartHandler = (id) => {
 		dispatch(removeFromCart(id))
-		history.push('/cart')
 	}
 
 	const checkoutHandler = () => {
@@ -67,12 +66,13 @@ const CartScreen = ({ match, location, history }) => {
 											))}
 										</Form.Control>
 									</Col>
-									<Col>
+									<Col md={2}>
 										<Button
+											type='button'
 											variant='light'
-											onClick={(e) => removeFromCartHandler(item.product)}
+											onClick={() => removeFromCartHandler(item.product)}
 										>
-											<i className='fas fa-trash' />
+											<i className='fas fa-trash'></i>
 										</Button>
 									</Col>
 								</Row>
@@ -83,8 +83,8 @@ const CartScreen = ({ match, location, history }) => {
 			</Col>
 			<Col md={4}>
 				<Card>
-					<ListGroup>
-						<ListGroup.Item varian='flush'>
+					<ListGroup variant='flush'>
+						<ListGroup.Item>
 							<h2>
 								Subtotal ({cartItems.reduce((acc, item) => acc + item.qty, 0)})
 								items
@@ -96,12 +96,12 @@ const CartScreen = ({ match, location, history }) => {
 						</ListGroup.Item>
 						<ListGroup.Item>
 							<Button
-								className='btn-block'
 								type='button'
+								className='btn-block'
 								disabled={cartItems.length === 0}
 								onClick={checkoutHandler}
 							>
-								Proceed to Checkout
+								Proceed To Checkout
 							</Button>
 						</ListGroup.Item>
 					</ListGroup>
