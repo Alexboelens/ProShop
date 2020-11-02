@@ -1,14 +1,19 @@
-import React, { useState } from 'react'
+import React, { useEffect } from 'react'
 import { Button, Row, Col, ListGroup, Card, Image } from 'react-bootstrap'
 import { useDispatch, useSelector } from 'react-redux'
 import Message from '../components/Message'
 import CheckoutSteps from '../components/CheckoutSteps'
 import { Link } from 'react-router-dom'
+import { createOrder } from '../redux/actions/orderActions'
 
-const PlaceOrderScreen = () => {
+const PlaceOrderScreen = ({ history }) => {
+	const dispatch = useDispatch()
+
 	const cart = useSelector((state) => state.cart)
+	const orderCreate = useSelector((state) => state.orderCreate)
 
 	const { address, city, postalCode, country } = cart.shippingAddress
+	const { error, order, success } = orderCreate
 
 	// Calculate Prices
 	const addDecimals = (num) => {
@@ -26,7 +31,26 @@ const PlaceOrderScreen = () => {
 		Number(cart.taxPrice)
 	).toFixed(2)
 
-	const placeOrderHandler = () => {}
+	useEffect(() => {
+		if (success && order._id) {
+			history.push(`/order/${order._id}`)
+		}
+		// eslint-disable-next-line
+	}, [history, success])
+
+	const placeOrderHandler = () => {
+		dispatch(
+			createOrder({
+				orderItems: cart.cartItems,
+				shippingAddress: cart.shippingAddress,
+				paymentMethod: cart.paymentMethod,
+				itemsPrice: cart.itemsPrice,
+				shippingPrice: cart.shippingPrice,
+				taxPrice: cart.taxPrice,
+				totalPrice: cart.totalPrice
+			})
+		)
+	}
 
 	return (
 		<>
@@ -71,7 +95,8 @@ const PlaceOrderScreen = () => {
 													</Link>
 												</Col>
 												<Col md={4}>
-													{item.qty} X ${item.price} = ${item.qty * item.price}
+													{item.qty} X ${item.price} = $
+													{(item.qty * item.price).toFixed(2)}
 												</Col>
 											</Row>
 										</ListGroup.Item>
@@ -110,6 +135,9 @@ const PlaceOrderScreen = () => {
 									<Col>Total</Col>
 									<Col>${cart.totalPrice}</Col>
 								</Row>
+							</ListGroup.Item>
+							<ListGroup.Item>
+								{error && <Message variant='danger'>{error}</Message>}
 							</ListGroup.Item>
 							<ListGroup.Item>
 								<Button
