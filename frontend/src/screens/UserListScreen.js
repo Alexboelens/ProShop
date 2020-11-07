@@ -6,16 +6,22 @@ import Message from '../components/Message'
 import Loader from '../components/Loader'
 import { getUserList } from '../redux/actions/userActions'
 
-const UserListScreen = () => {
+const UserListScreen = ({ history }) => {
 	const dispatch = useDispatch()
 
 	const userList = useSelector((state) => state.userList)
 	const { loading, error, users } = userList
 
+	const userLogin = useSelector((state) => state.userLogin)
+	const { userInfo } = userLogin
+
 	useEffect(() => {
-		dispatch(getUserList)
-		console.log(users)
-	}, [dispatch])
+		if (userInfo && userInfo.isAdmin) {
+			dispatch(getUserList())
+		} else {
+			history.push('/login')
+		}
+	}, [dispatch, userInfo, history])
 
 	const deleteHandler = (id) => {
 		console.log('test')
@@ -29,7 +35,7 @@ const UserListScreen = () => {
 			) : error ? (
 				<Message variant='danger'>{error}</Message>
 			) : (
-				<Table className='table-sm' striped bordered hover responsive>
+				<Table striped bordered hover responsive className='table-sm'>
 					<thead>
 						<tr>
 							<th>ID</th>
@@ -47,7 +53,6 @@ const UserListScreen = () => {
 								<td>
 									<a href={`mailto:${user.email}`}>{user.email}</a>
 								</td>
-								<td>{user.isAdmin}</td>
 								<td>
 									{user.isAdmin ? (
 										<i className='fas fa-check' style={{ color: 'green' }}></i>
@@ -56,7 +61,7 @@ const UserListScreen = () => {
 									)}
 								</td>
 								<td>
-									<LinkContainer to={`/user/${user._id}/edit`}>
+									<LinkContainer to={`/admin/user/${user._id}/edit`}>
 										<Button variant='light' className='btn-sm'>
 											<i className='fas fa-edit'></i>
 										</Button>

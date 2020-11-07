@@ -16,8 +16,9 @@ import {
 	USER_UPDATE_PROFILE_RESET,
 	USER_DETAILS_RESET,
 	USER_LIST_FAIL,
+	USER_LIST_REQUEST,
 	USER_LIST_SUCCESS,
-	USER_LIST_REQUEST
+	USER_LIST_RESET
 } from '../constants/userConstants'
 import { MY_ORDER_LIST_RESET } from '../constants/orderConstants'
 
@@ -60,6 +61,7 @@ export const logout = () => (dispatch) => {
 	dispatch({ type: USER_LOGOUT })
 	dispatch({ type: USER_DETAILS_RESET })
 	dispatch({ type: MY_ORDER_LIST_RESET })
+	dispatch({ type: USER_LIST_RESET })
 
 	localStorage.removeItem('userInfo')
 }
@@ -213,7 +215,7 @@ export const getUserList = () => async (dispatch, getState) => {
 			payload:
 				error.response && error.response.data.message
 					? error.response.data.message
-					: error.response
+					: error.message
 		})
 	}
 }
