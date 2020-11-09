@@ -68,8 +68,11 @@ export const logout = () => (dispatch) => {
 	dispatch({ type: USER_DETAILS_RESET })
 	dispatch({ type: MY_ORDER_LIST_RESET })
 	dispatch({ type: USER_LIST_RESET })
-
+	localStorage.removeItem('cartItems')
+	localStorage.removeItem('shippingAddress')
+	localStorage.removeItem('paymentMethod')
 	localStorage.removeItem('userInfo')
+	document.location.href = '/login'
 }
 
 export const register = (name, email, password) => async (dispatch) => {
