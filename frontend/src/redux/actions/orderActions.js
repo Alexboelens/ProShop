@@ -11,7 +11,10 @@ import {
 	ORDER_PAY_SUCCESS,
 	MY_ORDER_LIST_FAIL,
 	MY_ORDER_LIST_REQUEST,
-	MY_ORDER_LIST_SUCCESS
+	MY_ORDER_LIST_SUCCESS,
+	GET_ORDER_LIST_REQUEST,
+	GET_ORDER_LIST_FAIL,
+	GET_ORDER_LIST_SUCCESS
 } from '../constants/orderConstants'
 import { CART_CLEAR_ITEMS } from '../constants/cartConstants'
 
@@ -157,6 +160,39 @@ export const getMyOrders = () => async (dispatch, getState) => {
 				error.response && error.response.data.message
 					? error.response.data.message
 					: error.response
+		})
+	}
+}
+
+export const getOrderList = () => async (dispatch, getState) => {
+	try {
+		dispatch({
+			type: GET_ORDER_LIST_REQUEST
+		})
+
+		const {
+			userLogin: { userInfo }
+		} = getState()
+
+		const config = {
+			headers: {
+				Authorization: `Bearer ${userInfo.token}`
+			}
+		}
+
+		const { data } = await axios.get(`/api/orders`, config)
+
+		dispatch({
+			type: GET_ORDER_LIST_SUCCESS,
+			payload: data
+		})
+	} catch (error) {
+		dispatch({
+			type: GET_ORDER_LIST_FAIL,
+			payload:
+				error.response && error.response.data.message
+					? error.response.data.message
+					: error.message
 		})
 	}
 }
